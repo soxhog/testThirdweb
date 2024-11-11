@@ -1,7 +1,7 @@
 import { ConnectButton } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
 import { ethereum } from "thirdweb/chains";
-import { client } from "./utils/thirdweb.helper";
+import { client } from "@/utils/thirdweb.helper";
 
 export default function Home() {
   const wallets = [
