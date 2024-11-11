@@ -18,46 +18,7 @@
 </head>
 <body>
   <div id="nft-card-container">
-    <iframe sandbox="allow-scripts allow-modals allow-same-origin allow-popups allow-popups-to-escape-sandbox" id="nft-card-iframe" src="https://stg-eposnft.nftcard.world/?campaignId=2c904645-68c4-444a-bdbd-0f8b9c52d985" width="100%" height="100%" style="border: none;"></iframe>
+    <iframe id="nft-card-iframe" src="https://test-thirdweb-five.vercel.app/" width="100%" height="100%" style="border: none;"></iframe>
   </div>
-
-  <script>
-    window.addEventListener('message', function (event) {
-      console.log("Received message event:", event);
-      // セキュリティのために、event.originが信頼できるソースからのものであることを確認する
-      if (event.origin !== 'https://stg-eposnft.nftcard.world') { // 信頼できるオリジンに置き換える
-        console.warn("Untrusted origin:", event.origin);
-        return;
-      }
-
-      if (event.data.error) {
-        console.error("Error:", event.data.error);
-        alert("Errorが発生しました。");
-        return;
-      } else if (event.data.cancel) {
-        console.log("Canceled");
-        alert("キャンセルされました。");
-        return;
-      }
-
-      const { contractAddress, tokenId, imageURL, walletAddress } = event.data.data;
-
-    // 受信したデータを使用して処理
-    if (contractAddress && tokenId && imageURL && walletAddress) {
-      const output = `これはeposのページです。
-Wallet Address: ${walletAddress}
-Contract Address: ${contractAddress}
-Token ID: ${tokenId}
-Image URL: ${imageURL}
-`;
-      alert(output);
-    } else {
-        console.warn("Unexpected message format:", event.data);
-        console.log("type of contractAddress", typeof contractAddress);
-        console.log("type of tokenId", typeof tokenId);
-        console.log("type of imageURL", typeof imageURL);
-      }
-    });
-  </script>
 </body>
 </html>
