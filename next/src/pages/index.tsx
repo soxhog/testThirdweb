@@ -15,7 +15,7 @@ export default function Home() {
     createWallet("com.trustwallet.app"),
   ];
   const [account, setAccount] = useState<string>();
-  const { sdk, connected, connecting, provider, chainId } = useSDK();
+  const { sdk, connected, chainId } = useSDK();
 
   const walletConnect = async () => {
     try {
