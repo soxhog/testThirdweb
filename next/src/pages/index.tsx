@@ -1,70 +1,45 @@
-import { ConnectButton } from "thirdweb/react";
-import { createWallet } from "thirdweb/wallets";
-import { ethereum } from "thirdweb/chains";
-import { client } from "@/utils/thirdweb.helper";
-import { useSDK } from "@metamask/sdk-react";
 import { useState } from "react";
+import { ethers } from "ethers";
 
-export default function Home() {
-  const wallets = [
-    createWallet("io.metamask"),
-    createWallet("com.coinbase.wallet"),
-    createWallet("me.rainbow"),
-    createWallet("io.rabby"),
-    createWallet("io.zerion.wallet"),
-    createWallet("com.trustwallet.app"),
-  ];
-  const [account, setAccount] = useState<string>();
-  const { sdk, connected, chainId } = useSDK();
+const Home = () => {
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const walletConnect = async () => {
+  const connectWallet = async () => {
     try {
-      const accounts = await sdk?.connect();
-      setAccount(accounts?.[0]);
-    } catch (err) {
-      console.warn("failed to connect..", err);
+      // MetaMask がブラウザに存在するか確認
+      if (!window.ethereum) {
+        setError("MetaMask がインストールされていません。");
+        return;
+      }
+
+      // MetaMask に接続
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+
+      // ウォレットアドレスを状態に保存
+      setWalletAddress(address);
+      setError(null); // エラーをクリア
+    } catch (err: any) {
+      setError(err.message || "ウォレット接続に失敗しました。");
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen space-y-4">
-      <h1 className="text-4xl font-bold">Child Page</h1>
-      <ConnectButton
-        autoConnect={{ timeout: 1000 * 60 * 60 * 24 }} // 24時間
-        client={client}
-        locale="ja_JP"
-        chain={ethereum}
-        appMetadata={{
-          name: "Epos card app",
-          description: "Display your NFTs and select your favorite one.",
-          // TODO: ロゴを設定する
-          url: "https://example.com", // TODO: URLを設定する
-        }}
-        connectButton={{
-          className: "wallet-button",
-        }}
-        connectModal={{
-          size: "compact",
-          showThirdwebBranding: false,
-          titleIcon: "",
-        }}
-        wallets={wallets}
-      />
-      <button
-        className="bg-blue-500 text-white p-2 rounded-md"
-        onClick={walletConnect}
-      >
-        MetaMask Connect Wallet
-      </button>
-      {connected && (
+    <div style={{ textAlign: "center", padding: "20px" }}>
+      <h1>Connect to MetaMask</h1>
+      {walletAddress ? (
         <div>
-          <>
-            {chainId && `Connected chain: ${chainId}`}
-            <p></p>
-            {account && `Connected account: ${account}`}
-          </>
+          <p>ウォレットアドレス: {walletAddress}</p>
         </div>
+      ) : (
+        <button onClick={connectWallet}>Connect Wallet</button>
       )}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
-}
+};
+
+export default Home;
