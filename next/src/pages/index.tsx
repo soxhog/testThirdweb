@@ -15,12 +15,19 @@ const Home = () => {
       setError("failed to connect..");
     }
   };
+  const disconnect = async () => {
+    await sdk?.disconnect();
+    setWalletAddress(null);
+  };
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h1>Connect to MetaMask</h1>
       <button style={{ padding: 10, margin: 10 }} onClick={connect}>
         Connect
+      </button>
+      <button style={{ padding: 10, margin: 10 }} onClick={disconnect}>
+        Disconnect
       </button>
       {connected && (
         <div>
