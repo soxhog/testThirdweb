@@ -4,7 +4,7 @@ import { useSDK } from "@metamask/sdk-react";
 const Home = () => {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { sdk, connected, connecting, provider, chainId } = useSDK();
+  const { sdk, connected, chainId } = useSDK();
 
   const connect = async () => {
     try {
