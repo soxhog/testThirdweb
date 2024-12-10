@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.30.2",
-    "@metamask/sdk-react": "^0.30.2",
+    "@metamask/sdk": "^0.26.5",
+    "@metamask/sdk-react": "^0.26.5",
     "ethers": "^6.13.4",
     "next": "15.0.3",
     "react": "18.3.1",
