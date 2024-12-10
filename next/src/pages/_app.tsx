@@ -12,6 +12,11 @@ export default function App({ Component, pageProps }: AppProps) {
           name: "Epos card app",
           url: "https://example.com",
         },
+        openDeeplink(arg) {
+          console.log("openDeeplink", arg);
+          window.open(arg, "_blank");
+          console.log(`deeplink opened: ${arg}`);
+        },
       }}
     >
       <Component {...pageProps} />
