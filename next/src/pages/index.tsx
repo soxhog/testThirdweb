@@ -82,6 +82,10 @@ const Home = () => {
       console.log("metamask exists");
       const ethereum = (window as any).ethereum;
       try {
+        await ethereum.request({
+          method: "wallet_requestPermissions",
+          params: [{ eth_accounts: {} }],
+        });
         const accounts = await ethereum.request({
           method: "eth_requestAccounts",
         });
