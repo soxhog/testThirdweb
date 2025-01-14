@@ -38,6 +38,15 @@
         }
         ethereum.request({ method: "eth_requestAccounts" }).then((accounts) => {
           console.log("Connected to Ethereum:", accounts);
+          // ここで connect したウォレットアドレスを子（iframe）に送り返す
+          // event.source がメッセージ送信元 (= iframeのwindowオブジェクト) なので、それに対して postMessage する
+          event.source.postMessage(
+            {
+              type: "WALLET_ADDRESS",
+              address: accounts[0]
+            },
+            event.origin
+          );
         }).catch((error) => {
           console.error("Failed to connect to Ethereum:", error);
         });
