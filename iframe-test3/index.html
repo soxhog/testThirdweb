@@ -21,4 +21,28 @@
     <!-- <iframe id="nft-card-iframe" sandbox="allow-scripts allow-modals allow-same-origin allow-popups allow-popups-to-escape-sandbox" src="https://epos-card-git-skagiya-262-update-wallet-connect-183272-1-block.vercel.app/?campaignId=2c904645-68c4-444a-bdbd-0f8b9c52d985" width="100%" height="100%" style="border: none;"></iframe> -->
   </div>
   <script charset="UTF-8" ooc-app-script src="https://epos-card-git-skagiya-262-update-wallet-connect-183272-1-block.vercel.app/common/showNftCard.js" campaignId="2c904645-68c4-444a-bdbd-0f8b9c52d985"></script>
+  <script>
+    window.addEventListener('message', function (event) {
+      console.log("Received message event:", event);
+      // セキュリティのために、event.originが信頼できるソースからのものであることを確認する
+      if (event.origin !== 'https://epos-card-git-skagiya-262-update-wallet-connect-183272-1-block.vercel.app') { // 信頼できるオリジンに置き換える
+        console.warn("Untrusted origin:", event.origin);
+        return;
+      }
+      if (event.data.isConnecting) {
+        console.log("Connecting...");
+        const ethereum = window.ethereum;
+        if (!ethereum) {
+          console.error("Ethereum object not found");
+          return;
+        }
+        ethereum.request({ method: "eth_requestAccounts" }).then((accounts) => {
+          console.log("Connected to Ethereum:", accounts);
+        }).catch((error) => {
+          console.error("Failed to connect to Ethereum:", error);
+        });
+      }
+    });
+  </script>
 </html>
+
