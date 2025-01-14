@@ -33,8 +33,8 @@
       return;
     }
 
-    // 子から isConnecting が true のメッセージを受け取ったら connect する
-    if (event.data.isConnecting) {
+    // 子から requestWalletConnection が true のメッセージを受け取ったら connect する
+    if (event.data.requestWalletConnection) {
       console.log("Connecting...");
 
       // childWindowをここで保存しておく（今後アドレス変更イベントで使うため）
