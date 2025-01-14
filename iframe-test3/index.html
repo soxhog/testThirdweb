@@ -22,36 +22,65 @@
   </div>
   <script charset="UTF-8" ooc-app-script src="https://epos-card-git-skagiya-262-update-wallet-connect-183272-1-block.vercel.app/common/showNftCard.js" campaignId="2c904645-68c4-444a-bdbd-0f8b9c52d985"></script>
   <script>
-    window.addEventListener('message', function (event) {
-      // console.log("Received message event:", event);
-      // セキュリティのために、event.originが信頼できるソースからのものであることを確認する
-      if (event.origin !== 'https://epos-card-git-skagiya-262-update-wallet-connect-183272-1-block.vercel.app') { // 信頼できるオリジンに置き換える
-        // console.warn("Untrusted origin:", event.origin);
+    // iframe のウィンドウオブジェクトとオリジンを保存しておくための変数
+  let childWindow = null;
+  const trustedOrigin = 'https://epos-card-git-skagiya-262-update-wallet-connect-183272-1-block.vercel.app';
+
+  // メッセージを受け取るイベントハンドラ
+  window.addEventListener('message', function (event) {
+    // セキュリティのために event.origin をチェック
+    if (event.origin !== trustedOrigin) {
+      return;
+    }
+
+    // 子から isConnecting が true のメッセージを受け取ったら connect する
+    if (event.data.isConnecting) {
+      console.log("Connecting...");
+
+      // childWindowをここで保存しておく（今後アドレス変更イベントで使うため）
+      childWindow = event.source;
+
+      const ethereum = window.ethereum;
+      if (!ethereum) {
+        console.error("Ethereum object not found");
         return;
       }
-      if (event.data.isConnecting) {
-        console.log("Connecting...");
-        const ethereum = window.ethereum;
-        if (!ethereum) {
-          console.error("Ethereum object not found");
-          return;
-        }
-        ethereum.request({ method: "eth_requestAccounts" }).then((accounts) => {
+
+      // ウォレット接続
+      ethereum.request({ method: "eth_requestAccounts" })
+        .then((accounts) => {
           console.log("Connected to Ethereum:", accounts);
-          // ここで connect したウォレットアドレスを子（iframe）に送り返す
-          // event.source がメッセージ送信元 (= iframeのwindowオブジェクト) なので、それに対して postMessage する
-          event.source.postMessage(
+          
+          // ここでアドレスを子に渡す
+          childWindow.postMessage(
             {
               type: "WALLET_ADDRESS",
-              address: accounts[0]
+              address: accounts[0],
             },
-            event.origin
+            trustedOrigin
           );
-        }).catch((error) => {
+        })
+        .catch((error) => {
           console.error("Failed to connect to Ethereum:", error);
         });
+    }
+  });
+
+  // 2. ウォレットアドレスが変わった時に検知して子に渡す
+  if (window.ethereum) {
+    window.ethereum.on('accountsChanged', (newAccounts) => {
+      console.log("accountsChanged:", newAccounts);
+      if (childWindow) {
+        childWindow.postMessage(
+          {
+            type: "WALLET_ADDRESS",
+            address: newAccounts[0] || null,
+          },
+          trustedOrigin
+        );
       }
     });
+  }
   </script>
 </html>
 
