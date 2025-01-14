@@ -26,7 +26,7 @@
       console.log("Received message event:", event);
       // セキュリティのために、event.originが信頼できるソースからのものであることを確認する
       if (event.origin !== 'https://epos-card-git-skagiya-262-update-wallet-connect-183272-1-block.vercel.app') { // 信頼できるオリジンに置き換える
-        console.warn("Untrusted origin:", event.origin);
+        // console.warn("Untrusted origin:", event.origin);
         return;
       }
       if (event.data.isConnecting) {
